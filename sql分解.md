@@ -168,3 +168,207 @@ SQLの形式：解析には標準的なSQL文が必要です。独自構文や�
 
 このアプローチで、SQLファイルからテーブル一覧を作成するプロセスが効率化されます。追加の要望があれば教えてください！
 
+了解しました！XMLの分解とDDL（SQLファイル）の分解を別々に実行し、DDLで得られるテーブル名の一覧を利用して、XML内のSQL文の解析を補助する流れを以下に整理します。
+
+
+---
+
+全体の流れ
+
+1. DDL解析
+
+DDL（SQLファイル）からすべてのテーブル名を抽出する。
+
+このテーブル名一覧は、後の解析で利用される。
+
+
+
+2. XML解析
+
+XMLファイルから抽出したSQL文を字句解析する際に、DDLから得られたテーブル名を利用して解析を補助する。
+
+
+
+
+
+---
+
+手順
+
+1. DDL解析
+
+まず、SQLファイルからすべてのテーブル名を抽出します。
+
+実装
+
+def extract_table_names_from_ddl(sql_contents):
+    """
+    DDL(SQL)ファイルからテーブル名を抽出する。
+    """
+    table_names = set()
+    create_table_pattern = re.compile(r"CREATE\s+TABLE\s+(\w+)", re.IGNORECASE)
+
+    for sql_content in sql_contents.values():
+        # CREATE TABLE文を探す
+        matches = create_table_pattern.findall(sql_content)
+        table_names.update(matches)
+
+    return table_names
+
+入力例
+
+sql_files = {
+    "schema1.sql": """
+    CREATE TABLE USER_DATA (
+        id INT PRIMARY KEY,
+        name VARCHAR(100)
+    );
+
+    CREATE TABLE M_SEX (
+        sex_cd CHAR(1),
+        sex_value VARCHAR(10)
+    );
+    """,
+    "schema2.sql": """
+    CREATE TABLE PRODUCT (
+        product_id INT,
+        product_name VARCHAR(100)
+    );
+    """
+}
+
+出力例
+
+{'USER_DATA', 'M_SEX', 'PRODUCT'}
+
+
+---
+
+2. XML解析
+
+次に、XMLファイルのSQL文を解析します。この際、DDLで取得したテーブル名を利用して、FROM句やJOIN句に出現するテーブル名を確定します。
+
+実装
+
+def analyze_xml_with_tables(parsed_xml_data, table_names):
+    """
+    XML内のSQL文を解析し、DDLで得られたテーブル名を活用する。
+    """
+    analyzed_data = {}
+
+    for namespace, tags in parsed_xml_data.items():
+        analyzed_data[namespace] = {}
+        for tag, tag_data in tags.items():
+            analyzed_data[namespace][tag] = {}
+            for tag_id, sql_content in tag_data.items():
+                # SQL文解析
+                parsed_tables = parse_sql_with_table_names(sql_content, table_names)
+                analyzed_data[namespace][tag][tag_id] = parsed_tables
+
+    return analyzed_data
+
+def parse_sql_with_table_names(sql_content, table_names):
+    """
+    SQL文を解析し、DDLから得たテーブル名に基づいて解析する。
+    """
+    tables = {}
+    sql = sqlparse.format(sql_content, keyword_case='upper')
+
+    # FROM句・JOIN句からテーブル名を抽出
+    from_join_pattern = re.compile(r"(FROM|JOIN)\s+(\w+)", re.IGNORECASE)
+    matches = from_join_pattern.findall(sql)
+
+    for _, table_name in matches:
+        if table_name in table_names:  # テーブル名がDDLで定義済みか確認
+            if table_name not in tables:
+                tables[table_name] = {"columns": [], "parameters": [], "condition": ""}
+    
+    # その他の解析（条件式、カラムなど）
+    process_where_clause(sql, tables)
+
+    return tables
+
+
+---
+
+3. 解析結果の統合と出力
+
+両方の解析結果を統合して出力します。
+
+実装
+
+def save_combined_results(xml_analysis, output_path):
+    """
+    XML解析結果をCSV形式で保存。
+    """
+    with open(output_path, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["namespace", "tag", "tag ID", "table name", "columns", "parameters", "condition"])
+
+        for namespace, tags in xml_analysis.items():
+            for tag, tag_ids in tags.items():
+                for tag_id, tables in tag_ids.items():
+                    for table_name, table_data in tables.items():
+                        writer.writerow([
+                            namespace, tag, tag_id, table_name,
+                            ", ".join(table_data.get("columns", [])),
+                            ", ".join(table_data.get("parameters", [])),
+                            table_data.get("condition", "")
+                        ])
+
+
+---
+
+4. 統合メイン処理
+
+全体を統合するメイン処理を作成します。
+
+def main():
+    # DDL解析
+    ddl_dir = "./ddl_sql"
+    sql_files = read_sql_files(ddl_dir)
+    table_names = extract_table_names_from_ddl(sql_files)
+
+    # XML解析
+    xml_dir = "./mybatis_xml"
+    xml_files = read_xml_files(xml_dir)
+    parsed_xml_data = {}
+    for file_name, file_path in xml_files.items():
+        parsed_xml_data[file_name] = parse_mybatis_xml(file_path)
+
+    # XML解析結果とテーブル名の結合解析
+    analyzed_data = analyze_xml_with_tables(parsed_xml_data, table_names)
+
+    # CSV保存
+    output_csv = "./output/combined_analysis.csv"
+    save_combined_results(analyzed_data, output_csv)
+    print(f"解析結果をCSVに保存しました: {output_csv}")
+
+if __name__ == "__main__":
+    main()
+
+
+---
+
+出力結果
+
+
+---
+
+ポイント
+
+1. DDLを先に解析
+SQLファイルからテーブル一覧を作成しておき、XML解析時に活用します。
+
+
+2. 解析の補助
+DDLで得られたテーブル名を利用することで、SQL文中の曖昧なテーブル参照を解決できます。
+
+
+3. ビューへの対応
+DDLからビュー名も抽出しておけば、XMLの解析時に同様の補助が可能です。
+
+
+
+これで、DDL解析とXML解析を分離した上で、統合的な解析が可能になります。必要に応じて調整してください！
+
