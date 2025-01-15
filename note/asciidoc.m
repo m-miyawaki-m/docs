@@ -232,3 +232,173 @@ data-bs-toggleやtab-paneのクラスを変更することで、Bootstrapのス�
 
 この方法で、Asciidocの内容を直接タブに差し込みつつ、Bootstrapのスタイルを活用できます。
 
+
+
+サイドバーでジャンルを切り替え、それぞれのジャンルに複数のタブを用意するには、Bootstrapのサイドバーとタブ機能を組み合わせる方法が最適です。
+
+以下に、具体的な手順とAsciidocコード例を示します。
+
+
+---
+
+手順
+
+1. サイドバーを作成 Bootstrapのlist-groupやnavクラスを使ってサイドバーを作成します。
+
+
+2. ジャンルごとにタブを用意 各ジャンルをtab-content内に対応するHTML要素として記述し、タブで切り替えられるようにします。
+
+
+3. ジャンルとタブの連携 サイドバーの項目をクリックすると、対応するジャンルが表示されるようにします。
+
+
+
+
+---
+
+実装例
+
+以下のコードは、サイドバーでジャンルを切り替え、それぞれのジャンルで複数のタブを用意する例です。
+
+Asciidocコード例
+
+++++
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+++++
+
+=== サイドバーとタブ管理のサンプル
+
+以下に、サイドバーとタブ機能を組み合わせた構造を作成します。
+
+++++
+<div class="container-fluid">
+  <div class="row">
+    <!-- サイドバー -->
+    <nav class="col-md-2 d-md-block bg-light sidebar">
+      <div class="position-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" id="genre1-link" data-bs-toggle="tab" href="#genre1" role="tab">ジャンル1</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="genre2-link" data-bs-toggle="tab" href="#genre2" role="tab">ジャンル2</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="genre3-link" data-bs-toggle="tab" href="#genre3" role="tab">ジャンル3</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- メインコンテンツ -->
+    <main class="col-md-10">
+      <div class="tab-content">
+        <!-- ジャンル1 -->
+        <div class="tab-pane fade show active" id="genre1" role="tabpanel">
+          <ul class="nav nav-tabs" id="genre1-tabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#genre1-tab1">タブ1</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#genre1-tab2">タブ2</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="genre1-tab1">ジャンル1 - タブ1の内容</div>
+            <div class="tab-pane fade" id="genre1-tab2">ジャンル1 - タブ2の内容</div>
+          </div>
+        </div>
+
+        <!-- ジャンル2 -->
+        <div class="tab-pane fade" id="genre2" role="tabpanel">
+          <ul class="nav nav-tabs" id="genre2-tabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#genre2-tab1">タブ1</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#genre2-tab2">タブ2</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="genre2-tab1">ジャンル2 - タブ1の内容</div>
+            <div class="tab-pane fade" id="genre2-tab2">ジャンル2 - タブ2の内容</div>
+          </div>
+        </div>
+
+        <!-- ジャンル3 -->
+        <div class="tab-pane fade" id="genre3" role="tabpanel">
+          <ul class="nav nav-tabs" id="genre3-tabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#genre3-tab1">タブ1</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#genre3-tab2">タブ2</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="genre3-tab1">ジャンル3 - タブ1の内容</div>
+            <div class="tab-pane fade" id="genre3-tab2">ジャンル3 - タブ2の内容</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+++++
+
+
+---
+
+実装のポイント
+
+1. サイドバー (Sidebar)
+
+Bootstrapのnavクラスを使い、ジャンルを切り替えるリンクを作成します。
+
+data-bs-toggle="tab"属性で、ジャンル切り替えを実現。
+
+
+
+2. ジャンルごとのタブ
+
+各ジャンルに対応するdivを用意し、その中にさらにタブを配置。
+
+各タブの内容はtab-paneクラスで記述。
+
+
+
+3. レスポンシブ対応
+
+container-fluidやcol-md-*を使用して、レスポンシブデザインを適用。
+
+
+
+
+
+---
+
+出力イメージ
+
+1. 左側のサイドバーでジャンルを切り替え。
+
+
+2. 右側のメインコンテンツで、選択したジャンルに対応するタブが表示。
+
+
+3. タブを切り替えると、それぞれの内容が表示される。
+
+
+
+
+---
+
+カスタマイズのヒント
+
+サイドバーのスタイルを変更したい場合は、bg-lightやposition-stickyを変更。
+
+各ジャンルやタブの内容をAsciidocで記述して柔軟に対応可能。
+
+
+このコードを使うことで、サイドバーとタブを組み合わせた構造を簡単に構築できます。
+
