@@ -31,6 +31,9 @@ Postman の最新リリースは **GitHub の Postman 公式リポジトリ** �
 
 #### **Winget を使う**
 ```sh
+winget show --id Postman.Postman
+winget download --id Postman.Postman --source winget --accept-package-agreements --accept-source-agreements --path C:\OfflinePackages\
+
 winget install --id Postman.Postman
 ```
 ✅ **Chocolatey/Winget が使えるなら、ダウンロードサイトにアクセスせずに Postman をインストール可能！**

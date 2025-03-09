@@ -17,5 +17,8 @@
     "react-dom": "^19.0.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "react-scripts": "file:note/IonicFramework/環境構築/offline_package/offline_packages/react-scripts-5.0.1.tgz"
   }
 }
