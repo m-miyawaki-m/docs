@@ -28,6 +28,8 @@ npm pack typescript@5.8.2 ts-node@10.9.2 @types/node@22.13.10
 
 # React関連 (バージョン指定)
 npm pack react@19.0.0 react-dom@19.0.0 react-router-dom@5.3.4 @ionic/react@8.4.3 @ionic/react-router@8.4.3
+
+npm pack react-scripts@5.0.1
 ```
 
 ✅ **作成される `.tgz`**
@@ -71,15 +73,18 @@ npm install `
   "../offline_packages/ionic-cli-7.2.0.tgz" `
   "../offline_packages/ionic-react-8.4.3.tgz" `
   "../offline_packages/ionic-react-router-8.4.3.tgz" `
-  "../offline_packages/react-19.0.0.tgz" `
-  "../offline_packages/react-dom-19.0.0.tgz" `
-  "../offline_packages/react-router-dom-5.3.4.tgz" `
+  "../offline_packages/react-18.3.1.tgz" `
+  "../offline_packages/react-dom-18.3.1.tgz" `
+  "../offline_packages/react-router-dom-6.15.0.tgz" `
   "../offline_packages/ts-node-10.9.2.tgz" `
   "../offline_packages/types-node-22.13.10.tgz" `
   "../offline_packages/typescript-5.8.2.tgz" `
+  "../offline_packages/react-scripts-5.0.1.tgz" `
+  "../offline_packages/types-react-18.3.18.tgz" `
+  "../offline_packages/types-react-dom-18.3.5.tgz" `
   --legacy-peer-deps --cache "../.npm-cache"
 
-  npm install ../offline_packages/react-scripts-5.0.1.tgz --cache "../.npm-cache"
+
 
 
 ```
