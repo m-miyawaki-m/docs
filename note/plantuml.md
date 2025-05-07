@@ -177,3 +177,74 @@ Browser --> User: ログイン完了通知
 
 何か具体的なシナリオで図を作りたいですか？
 
+
+スマホでもコピペしやすいように、note の使い方を簡潔にまとめました。
+
+
+---
+
+■ note の基本構文
+
+@startuml
+A -> B: メッセージ
+
+note right of B: 右側の注釈
+note left of A: 左側の注釈
+
+note over A,B
+2人に共通の注釈
+end note
+
+note right of A
+複数行の注釈
+2行目
+end note
+@enduml
+
+
+---
+
+■ note の位置
+
+書き方	意味
+
+note right of A	A の右に注釈
+note left of A	A の左に注釈
+note over A, B	AとBの上に注釈
+
+
+
+---
+
+■ 背景色を変える
+
+note right of A #ffcccc
+赤背景の注釈
+end note
+
+#ffcccc の部分を好きな色に変えられます
+
+
+
+---
+
+■ 使用例（ログイン処理）
+
+@startuml
+actor User
+participant App
+
+User -> App: login()
+note right of App: パスワードをハッシュ化
+
+App --> User: success
+note left of User: ログイン成功通知
+@enduml
+
+
+---
+
+このままコピペして、PlantUML公式やKroki等でそのまま動かせます。
+
+他にもスマホで使いやすいテンプレが必要ですか？
+
